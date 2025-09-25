@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sorveteria Bola de Neve</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script defer src="../js/script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Sorveteria Bola de Neve</h1>
+        <nav>
+            <button data-section="cadastro" class="active">Cadastrar Pedido</button>
+            <button data-section="pedidos">Pedidos Cadastrados</button>
+            <button data-section="resumo">Resumo</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="cadastro" class="tela active">
+            <div class="card">
+                <h2>Cadastrar Pedido</h2>
+                <form id="formPedido">
+                    <label for="formato">Formato:</label>
+                    <select id="formato" required>
+                        <option value="">Selecione um formato</option>
+                        <option value="Casquinha">Casquinha</option>
+                        <option value="Cascão">Cascão</option>
+                        <option value="Copo">Copo</option>
+                        <option value="Pote 500ml">Pote 500ml</option>
+                        <option value="Pote 1L">Pote 1L</option>
+                    </select>
+
+                    <label for="sabor">Sabor:</label>
+                    <select id="sabor" required>
+                        <option value="">Selecione um sabor</option>
+                        <option value="Chocolate">Chocolate</option>
+                        <option value="Morango">Morango</option>
+                        <option value="Creme">Creme</option>
+                        <option value="Baunilha">Baunilha</option>
+                        <option value="Napolitano">Napolitano</option>
+                        <option value="Flocos">Flocos</option>
+                        <option value="Limão">Limão</option>
+                        <option value="Uva">Uva</option>
+                        <option value="Abacaxi">Abacaxi</option>
+                        <option value="Coco">Coco</option>
+                        <option value="Doce de Leite">Doce de Leite</option>
+                        <option value="Pistache">Pistache</option>
+                    </select>
+
+                    <label for="complemento">Complemento:</label>
+                    <select id="complemento">
+                        <option value="">Selecione um complemento</option>
+                        <option value="Cobertura de Morango">Cobertura de Morango</option>
+                        <option value="Cobertura de Chocolate">Cobertura de Chocolate</option>
+                        <option value="Cobertura de Caramelo">Cobertura de Caramelo</option>
+                        <option value="Granulado">Granulado</option>
+                        <option value="Castanha">Castanha</option>
+                        <option value="Chantilly">Chantilly</option>
+                    </select>
+
+                    <label for="observacao">Observacao:</label>
+                    <textarea id="observacao" placeholder="Ex: Chocolate extra"></textarea>
+
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" min="1" required>
+
+                    <button type="submit">Adicionar</button>
+                </form>
+                <p id="mensagem"></p>
+            </div>
+        </section>
+
+        <section id="pedidos" class="tela">
+            <div class="card">
+                <h2>Pedidos Cadastrados</h2>
+                <ul id="listaPedidos"></ul>
+            </div>
+        </section>
+
+        <section id="resumo" class="tela">
+            <div class="card">
+                <h2>Resumo dos Pedidos</h2>
+                <p>Total de pedidos: <span id="totalPedidos">0</span></p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
