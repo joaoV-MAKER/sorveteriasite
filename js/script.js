@@ -5,17 +5,21 @@ const listaPedidos = document.getElementById("listaPedidos");
 const totalPedidos = document.getElementById("totalPedidos");
 const mensagem = document.getElementById("mensagem");
 
-let pedidos = [];
-
+// Alternar telas
 botoes.forEach(botao => {
     botao.addEventListener("click", () => {
         botoes.forEach(b => b.classList.remove("active"));
         botao.classList.add("active");
         telas.forEach(tela => tela.classList.remove("active"));
         document.getElementById(botao.dataset.section).classList.add("active");
+        
+        if (botao.dataset.section === "pedidos" || botao.dataset.section === "resumo") {
+            carregarPedidos();
+        }
     });
 });
 
+// Enviar pedido para API
 formPedido.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -31,44 +35,60 @@ formPedido.addEventListener("submit", (e) => {
         return;
     }
 
-    pedidos.push({ formato, sabor, complemento, observacao, quantidade });
-
-    formPedido.reset();
-    mensagem.textContent = "Pedido adicionado com sucesso!";
-    mensagem.style.color = "green";
-
-    atualizarLista();
-    atualizarResumo();
+    // 🔵 Envia para o backend Flask
+    fetch("http://127.0.0.1:5000/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formato, sabor, complemento, observacao, quantidade })
+    })
+    .then(res => res.json())
+    .then(data => {
+        mensagem.textContent = data.message;
+        mensagem.style.color = "green";
+        formPedido.reset();
+        carregarPedidos();
+    })
+    .catch(err => {
+        mensagem.textContent = "Erro ao enviar pedido.";
+        mensagem.style.color = "red";
+    });
 });
 
-function atualizarLista() {
-    listaPedidos.innerHTML = "";
-    pedidos.forEach((pedido, index) => {
-        const li = document.createElement("li");
-        li.textContent = `${index + 1}. ${pedido.formato} - ${pedido.sabor}` +
-                         (pedido.complemento ? ` com ${pedido.complemento}` : "") +
-                         (pedido.observacao ? ` (Obs: ${pedido.observacao})` : "") +
-                         ` — Quantidade: ${pedido.quantidade}`;
-        listaPedidos.appendChild(li);
-    });
+// Carregar pedidos do banco de dados
+function carregarPedidos() {
+    fetch("http://127.0.0.1:5000/pedidos")
+        .then(res => res.json())
+        .then(pedidos => {
+            listaPedidos.innerHTML = "";
+
+            pedidos.forEach((pedido, index) => {
+                const li = document.createElement("li");
+                li.textContent =
+                    `${index + 1}. ${pedido.formato} - ${pedido.sabor}` +
+                    (pedido.complemento ? ` com ${pedido.complemento}` : "") +
+                    (pedido.observacao ? ` (Obs: ${pedido.observacao})` : "") +
+                    ` — Quantidade: ${pedido.quantidade}`;
+                listaPedidos.appendChild(li);
+            });
+
+            totalPedidos.textContent = pedidos.length;
+            atualizarResumo();
+        });
 }
 
+// Atualiza horário da última atualização
 function atualizarResumo() {
-    totalPedidos.textContent = pedidos.length;
-
     let aviso = document.getElementById("avisoAtualizacao");
     if (!aviso) {
         aviso = document.createElement("p");
         aviso.id = "avisoAtualizacao";
         aviso.style.fontSize = "12px";
-        aviso.style.color = "white"; 
+        aviso.style.color = "white";
         aviso.style.fontWeight = "bold";
         aviso.style.marginTop = "5px";
         totalPedidos.parentNode.appendChild(aviso);
     }
-
-    const agora = new Date().toLocaleTimeString();
-    aviso.textContent = `Resumo atualizado às ${agora}`;
+    aviso.textContent = `Resumo atualizado às ${new Date().toLocaleTimeString()}`;
 }
 
-setInterval(atualizarResumo, 10000);
+setInterval(carregarPedidos, 10000);
